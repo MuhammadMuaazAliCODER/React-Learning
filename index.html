@@ -1,0 +1,1955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React 2-Day Crash Course</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f12;
+    --bg2: #13161b;
+    --bg3: #1a1e26;
+    --bg4: #222834;
+    --border: #2a3040;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --dim: #5a6478;
+    --accent: #61efce;
+    --accent2: #f7c948;
+    --accent3: #ff7c5c;
+    --blue: #7eb8f7;
+    --purple: #c4a5fa;
+    --green: #61efce;
+    --red: #ff7c5c;
+    --orange: #f7a948;
+    --nav-width: 240px;
+    --radius: 8px;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.7;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR */
+  nav {
+    width: var(--nav-width);
+    min-height: 100vh;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    left: 0; top: 0;
+    overflow-y: auto;
+    padding: 24px 0 40px;
+    z-index: 100;
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0 20px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+
+  .nav-day-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 16px 20px 6px;
+  }
+
+  nav a {
+    display: block;
+    padding: 7px 20px;
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all 0.15s ease;
+    font-family: var(--sans);
+    line-height: 1.4;
+  }
+
+  nav a:hover { color: var(--text); background: var(--bg3); }
+  nav a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(97,239,206,0.05); }
+
+  .nav-check-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 20px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all 0.15s ease;
+  }
+  .nav-check-item:hover { color: var(--text); background: var(--bg3); }
+  .nav-check-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(97,239,206,0.05); }
+
+  /* MAIN */
+  main {
+    margin-left: var(--nav-width);
+    flex: 1;
+    padding: 48px 56px;
+    max-width: 900px;
+  }
+
+  /* SECTIONS */
+  section { display: none; }
+  section.active { display: block; animation: fadeIn 0.25s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* TYPOGRAPHY */
+  h1 {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 40px;
+    font-weight: 300;
+  }
+
+  h2 {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 48px 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  h2 .tag {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h2 .tag.concept { background: rgba(126,184,247,0.15); color: var(--blue); }
+  h2 .tag.task { background: rgba(247,201,72,0.15); color: var(--accent2); }
+  h2 .tag.project { background: rgba(97,239,206,0.15); color: var(--accent); }
+  h2 .tag.mistake { background: rgba(255,124,92,0.15); color: var(--red); }
+
+  h3 {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--blue);
+    margin: 28px 0 10px;
+  }
+
+  p { margin-bottom: 14px; color: var(--text); }
+
+  strong { font-weight: 600; color: var(--text); }
+
+  em { color: var(--accent); font-style: normal; font-family: var(--mono); font-size: 13px; }
+
+  ul, ol { padding-left: 22px; margin-bottom: 14px; }
+  li { margin-bottom: 6px; color: var(--text); }
+
+  /* CODE BLOCKS */
+  pre {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    overflow-x: auto;
+    margin: 16px 0;
+    position: relative;
+  }
+
+  pre .file-label {
+    position: absolute;
+    top: 0; right: 0;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--dim);
+    background: var(--bg4);
+    border-bottom-left-radius: 6px;
+    padding: 4px 10px;
+    letter-spacing: 0.05em;
+  }
+
+  code {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  p code, li code {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--accent);
+  }
+
+  /* Syntax colors */
+  .kw { color: var(--purple); }
+  .fn { color: var(--blue); }
+  .str { color: var(--accent); }
+  .cmt { color: var(--dim); font-style: italic; }
+  .tag-c { color: var(--orange); }
+  .attr { color: var(--accent2); }
+  .num { color: var(--red); }
+  .var { color: var(--text); }
+
+  /* CALLOUT BOXES */
+  .box {
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-left: 3px solid;
+  }
+
+  .box.why {
+    background: rgba(126,184,247,0.07);
+    border-left-color: var(--blue);
+  }
+
+  .box.task {
+    background: rgba(247,201,72,0.07);
+    border-left-color: var(--accent2);
+  }
+
+  .box.mistake {
+    background: rgba(255,124,92,0.07);
+    border-left-color: var(--red);
+  }
+
+  .box.tip {
+    background: rgba(97,239,206,0.07);
+    border-left-color: var(--accent);
+  }
+
+  .box-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .box.why .box-label { color: var(--blue); }
+  .box.task .box-label { color: var(--accent2); }
+  .box.mistake .box-label { color: var(--red); }
+  .box.tip .box-label { color: var(--accent); }
+
+  /* DAY HEADER */
+  .day-header {
+    background: linear-gradient(135deg, var(--bg3), var(--bg4));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .day-number {
+    font-family: var(--mono);
+    font-size: 48px;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1;
+    opacity: 0.6;
+  }
+
+  .day-info h1 { margin-bottom: 4px; font-size: 24px; }
+
+  /* PROGRESS DOTS */
+  .progress-dots {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 32px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--bg4);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .dot.done { background: var(--accent); border-color: var(--accent); }
+
+  /* FOLDER TREE */
+  .tree {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 2;
+    margin: 16px 0;
+  }
+
+  .tree .folder { color: var(--blue); }
+  .tree .file { color: var(--muted); }
+  .tree .ann { color: var(--dim); font-size: 11px; }
+  .tree .highlight { color: var(--accent); }
+
+  /* CHECKLIST */
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--bg2);
+    user-select: none;
+  }
+
+  .checklist-item:hover { border-color: var(--accent); background: rgba(97,239,206,0.04); }
+  .checklist-item.checked { opacity: 0.5; }
+  .checklist-item.checked .cl-text { text-decoration: line-through; color: var(--muted); }
+
+  .cl-box {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1.5px solid var(--dim);
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 11px;
+  }
+
+  .checklist-item.checked .cl-box {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+
+  .cl-text { font-size: 14px; }
+  .cl-detail { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .score-bar {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    height: 8px;
+    margin: 24px 0 6px;
+    overflow: hidden;
+  }
+
+  .score-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+
+  .score-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  /* CONCEPT GRID */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .concept-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+
+  .concept-card .c-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent2);
+    margin-bottom: 4px;
+  }
+
+  .concept-card .c-desc {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* TWO COLUMN */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+
+  .two-col pre { margin: 0; }
+
+  /* FIGMA STEPS */
+  .steps {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+  }
+
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .steps li:last-child { border-bottom: none; }
+
+  .step-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    background: rgba(97,239,206,0.1);
+    border: 1px solid rgba(97,239,206,0.2);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .step-body { flex: 1; }
+  .step-body strong { display: block; margin-bottom: 4px; font-size: 14px; }
+  .step-body p { font-size: 13px; color: var(--muted); margin: 0; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { width: 200px; }
+    main { margin-left: 200px; padding: 32px 24px; }
+    .two-col, .concept-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 22px; }
+  }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    vertical-align: middle;
+    margin-left: 6px;
+  }
+  .badge.day1 { background: rgba(126,184,247,0.15); color: var(--blue); }
+  .badge.day2 { background: rgba(196,165,250,0.15); color: var(--purple); }
+
+  a.nav-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    background: rgba(97,239,206,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(97,239,206,0.2);
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 16px;
+    margin-right: 8px;
+  }
+  a.nav-link-btn:hover { background: rgba(97,239,206,0.18); }
+
+  .separator { color: var(--dim); margin: 0 6px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">⚛ React · 2-Day Plan</div>
+
+  <div class="nav-day-label">Day 1 — Core React</div>
+  <a href="#" class="active" onclick="show('intro')">Overview & Setup</a>
+  <a href="#" onclick="show('jsx')">1. JSX & Components</a>
+  <a href="#" onclick="show('props')">2. Props</a>
+  <a href="#" onclick="show('state')">3. State (useState)</a>
+  <a href="#" onclick="show('events')">4. Events & Forms</a>
+  <a href="#" onclick="show('lists')">5. Lists & Keys</a>
+  <a href="#" onclick="show('d1project')">Day 1 Project</a>
+
+  <div class="nav-day-label">Day 2 — Real World</div>
+  <a href="#" onclick="show('figma')">6. Figma → React</a>
+  <a href="#" onclick="show('breakdown')">7. Breaking UI Apart</a>
+  <a href="#" onclick="show('structure')">8. Folder Structure</a>
+  <a href="#" onclick="show('useeffect')">9. useEffect (Basics)</a>
+  <a href="#" onclick="show('d2project')">Day 2 Project</a>
+
+  <div class="nav-day-label">Final</div>
+  <a href="#" onclick="show('mistakes')">Common Mistakes</a>
+  <a href="#" onclick="show('checklist')">Readiness Checklist</a>
+</nav>
+
+<main>
+
+<!-- ========== INTRO ========== -->
+<section id="intro" class="active">
+  <div class="day-header">
+    <div class="day-number">00</div>
+    <div class="day-info">
+      <h1>React 2-Day Crash Course</h1>
+      <div class="subtitle">From HTML/CSS/JS developer → professional React developer</div>
+    </div>
+  </div>
+
+  <p>You already know the hard parts — JavaScript, DOM, events, CSS. React is just a <strong>system for organizing UI into reusable pieces</strong> and keeping the UI in sync with data. That's it. Don't let tutorials make it feel bigger than it is.</p>
+
+  <div class="box why">
+    <div class="box-label">🎯 Your Goal</div>
+    You do NOT need to master React in 2 days. You need to be able to: read a Figma design, break it into components, write clean code, and ship working UI. That's what this plan delivers.
+  </div>
+
+  <h2>Before You Start — Setup (30 min)</h2>
+
+  <p>Install these if you haven't already:</p>
+
+  <pre><code><span class="cmt"># Node.js (v18+) — check version</span>
+node --version
+
+<span class="cmt"># Create your first React project</span>
+<span class="fn">npx</span> create-vite@latest my-app --template react
+<span class="fn">cd</span> my-app
+<span class="fn">npm</span> install
+<span class="fn">npm</span> run dev</code></pre>
+
+  <div class="box tip">
+    <div class="box-label">✓ Why Vite, not Create React App?</div>
+    Vite starts in under a second. CRA is outdated and slow. All professional teams have moved to Vite.
+  </div>
+
+  <h3>VS Code Extensions (install all 3)</h3>
+  <ul>
+    <li><strong>ES7+ React/Redux/React-Native Snippets</strong> — type <code>rafce</code> to generate a component instantly</li>
+    <li><strong>Prettier</strong> — auto-formats code on save</li>
+    <li><strong>Auto Import - ES6</strong> — stops you from manually writing imports</li>
+  </ul>
+
+  <h2>What React Actually Is</h2>
+
+  <p>You know how in vanilla JS you write this when data changes:</p>
+  <pre><code><span class="cmt">// Vanilla JS — you manage the DOM manually</span>
+document.<span class="fn">getElementById</span>(<span class="str">'count'</span>).textContent = newCount;
+document.<span class="fn">getElementById</span>(<span class="str">'btn'</span>).<span class="fn">classList</span>.<span class="fn">toggle</span>(<span class="str">'active'</span>, newCount > 0);</code></pre>
+
+  <p>React's job is to do that for you — you just describe <em>what the UI should look like given the current data</em>, and React figures out what to update in the DOM.</p>
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="c-title">Component</div>
+      <div class="c-desc">A function that returns UI. Like a reusable HTML block with logic built in.</div>
+    </div>
+    <div class="concept-card">
+      <div class="c-title">Props</div>
+      <div class="c-desc">Data passed into a component from outside. Like HTML attributes, but for your components.</div>
+    </div>
+    <div class="concept-card">
+      <div class="c-title">State</div>
+      <div class="c-desc">Data that lives inside a component. When it changes, React re-renders the UI automatically.</div>
+    </div>
+    <div class="concept-card">
+      <div class="c-title">JSX</div>
+      <div class="c-desc">HTML-like syntax inside JavaScript. Compiled to regular JS by the build tool.</div>
+    </div>
+  </div>
+
+  <a class="nav-link-btn" onclick="show('jsx')">Start Day 1 →</a>
+</section>
+
+<!-- ========== JSX ========== -->
+<section id="jsx">
+  <div class="day-header">
+    <div class="day-number">01</div>
+    <div class="day-info">
+      <h1>JSX & Components <span class="badge day1">Day 1</span></h1>
+      <div class="subtitle">The foundation of everything in React</div>
+    </div>
+  </div>
+
+  <h2>What Is JSX? <span class="tag concept">Concept</span></h2>
+
+  <p>JSX looks like HTML but it's not. It's JavaScript that <em>describes</em> what the DOM should look like. There are a few key differences from HTML:</p>
+
+  <div class="two-col">
+    <div>
+      <h3>HTML</h3>
+      <pre><code><span class="tag-c">&lt;div</span> <span class="attr">class</span>=<span class="str">"card"</span><span class="tag-c">&gt;</span>
+  <span class="tag-c">&lt;img</span> <span class="attr">src</span>=<span class="str">"photo.jpg"</span><span class="tag-c">&gt;</span>
+  <span class="tag-c">&lt;label</span> <span class="attr">for</span>=<span class="str">"name"</span><span class="tag-c">&gt;</span>Name<span class="tag-c">&lt;/label&gt;</span>
+<span class="tag-c">&lt;/div&gt;</span></code></pre>
+    </div>
+    <div>
+      <h3>JSX</h3>
+      <pre><code><span class="tag-c">&lt;div</span> <span class="attr">className</span>=<span class="str">"card"</span><span class="tag-c">&gt;</span>
+  <span class="tag-c">&lt;img</span> <span class="attr">src</span>=<span class="str">"photo.jpg"</span> <span class="attr">/&gt;</span>
+  <span class="tag-c">&lt;label</span> <span class="attr">htmlFor</span>=<span class="str">"name"</span><span class="tag-c">&gt;</span>Name<span class="tag-c">&lt;/label&gt;</span>
+<span class="tag-c">&lt;/div&gt;</span></code></pre>
+    </div>
+  </div>
+
+  <ul>
+    <li><code>class</code> → <code>className</code> (class is a reserved JS keyword)</li>
+    <li><code>for</code> → <code>htmlFor</code></li>
+    <li>Self-closing tags MUST close: <code>&lt;img /&gt;</code> not <code>&lt;img&gt;</code></li>
+    <li>You can only return <strong>one root element</strong> per component</li>
+    <li>Use <code>{}</code> to embed any JavaScript expression</li>
+  </ul>
+
+  <h2>Your First Component <span class="tag concept">Concept</span></h2>
+
+  <p>A component is just a <strong>function that returns JSX</strong>. Name it with a capital letter (this is mandatory — lowercase = HTML tag, uppercase = your component).</p>
+
+  <pre><code><span class="file-label">UserCard.jsx</span>
+<span class="cmt">// A component is a function that returns JSX</span>
+<span class="kw">function</span> <span class="fn">UserCard</span>() {
+  <span class="kw">const</span> name = <span class="str">"Sarah Ahmed"</span>;
+  <span class="kw">const</span> isOnline = <span class="kw">true</span>;
+
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;div</span> <span class="attr">className</span>=<span class="str">"card"</span><span class="tag-c">&gt;</span>
+      <span class="tag-c">&lt;h2&gt;</span>{ name }<span class="tag-c">&lt;/h2&gt;</span>
+      <span class="tag-c">&lt;p&gt;</span>{ isOnline ? <span class="str">"🟢 Online"</span> : <span class="str">"⚫ Offline"</span> }<span class="tag-c">&lt;/p&gt;</span>
+      <span class="tag-c">&lt;p&gt;</span>Joined: { <span class="kw">new</span> <span class="fn">Date</span>().getFullYear() }<span class="tag-c">&lt;/p&gt;</span>
+    <span class="tag-c">&lt;/div&gt;</span>
+  );
+}
+
+<span class="cmt">// Always export your component</span>
+<span class="kw">export default</span> UserCard;</code></pre>
+
+  <div class="box why">
+    <div class="box-label">💡 Why Return Parentheses?</div>
+    The parentheses around JSX are required when it spans multiple lines. Without them, JavaScript's automatic semicolon insertion will silently break your code.
+  </div>
+
+  <h3>Using a Component</h3>
+  <pre><code><span class="file-label">App.jsx</span>
+<span class="kw">import</span> UserCard <span class="kw">from</span> <span class="str">'./UserCard'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;div&gt;</span>
+      <span class="tag-c">&lt;UserCard /&gt;</span>   <span class="cmt">{/* Use it like an HTML tag */}</span>
+      <span class="tag-c">&lt;UserCard /&gt;</span>   <span class="cmt">{/* Reuse it! */}</span>
+    <span class="tag-c">&lt;/div&gt;</span>
+  );
+}
+
+<span class="kw">export default</span> App;</code></pre>
+
+  <h2>Mini Task <span class="tag task">Task</span></h2>
+  <div class="box task">
+    <div class="box-label">🎯 Do This Now (20 min)</div>
+    <ol>
+      <li>Create a file <code>src/components/ProfileCard.jsx</code></li>
+      <li>Write a component that shows: name, job title, location, and a "View Profile" button</li>
+      <li>Use <code>className</code> for styling (add a CSS file or use inline styles)</li>
+      <li>Import and render it twice in <code>App.jsx</code></li>
+    </ol>
+    <p style="margin-top:10px; font-size:13px; color:var(--muted)">Goal: See your component appear twice with no code duplication.</p>
+  </div>
+
+  <a class="nav-link-btn" onclick="show('props')">Next: Props →</a>
+</section>
+
+<!-- ========== PROPS ========== -->
+<section id="props">
+  <div class="day-header">
+    <div class="day-number">02</div>
+    <div class="day-info">
+      <h1>Props <span class="badge day1">Day 1</span></h1>
+      <div class="subtitle">How you pass data into components</div>
+    </div>
+  </div>
+
+  <h2>What Are Props? <span class="tag concept">Concept</span></h2>
+
+  <p>Props are how you pass data <em>into</em> a component from outside. Think of them exactly like HTML attributes — except you define them yourself.</p>
+
+  <div class="box why">
+    <div class="box-label">💡 Why Props?</div>
+    Without props, every component is hardcoded and useless for reuse. Props are what make components generic and reusable — the difference between a component that shows "Sarah" forever and one that shows whatever name you give it.
+  </div>
+
+  <pre><code><span class="file-label">UserCard.jsx</span>
+<span class="cmt">// ✅ Accept props as the first argument (destructure for clarity)</span>
+<span class="kw">function</span> <span class="fn">UserCard</span>({ name, role, avatar, isOnline }) {
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;div</span> <span class="attr">className</span>=<span class="str">"card"</span><span class="tag-c">&gt;</span>
+      <span class="tag-c">&lt;img</span> <span class="attr">src</span>={avatar} <span class="attr">alt</span>={name} <span class="tag-c">/&gt;</span>
+      <span class="tag-c">&lt;h2&gt;</span>{name}<span class="tag-c">&lt;/h2&gt;</span>
+      <span class="tag-c">&lt;p&gt;</span>{role}<span class="tag-c">&lt;/p&gt;</span>
+      <span class="tag-c">&lt;span&gt;</span>{isOnline ? <span class="str">"Online"</span> : <span class="str">"Offline"</span>}<span class="tag-c">&lt;/span&gt;</span>
+    <span class="tag-c">&lt;/div&gt;</span>
+  );
+}
+
+<span class="kw">export default</span> UserCard;</code></pre>
+
+  <pre><code><span class="file-label">App.jsx</span>
+<span class="kw">import</span> UserCard <span class="kw">from</span> <span class="str">'./components/UserCard'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;div&gt;</span>
+      <span class="cmt">{/* Pass data just like HTML attributes */}</span>
+      <span class="tag-c">&lt;UserCard</span>
+        <span class="attr">name</span>=<span class="str">"Sarah Ahmed"</span>
+        <span class="attr">role</span>=<span class="str">"Frontend Developer"</span>
+        <span class="attr">avatar</span>=<span class="str">"/avatars/sarah.jpg"</span>
+        <span class="attr">isOnline</span>={<span class="kw">true</span>}
+      <span class="tag-c">/&gt;</span>
+
+      <span class="tag-c">&lt;UserCard</span>
+        <span class="attr">name</span>=<span class="str">"Ali Khan"</span>
+        <span class="attr">role</span>=<span class="str">"UI Designer"</span>
+        <span class="attr">avatar</span>=<span class="str">"/avatars/ali.jpg"</span>
+        <span class="attr">isOnline</span>={<span class="kw">false</span>}
+      <span class="tag-c">/&gt;</span>
+    <span class="tag-c">&lt;/div&gt;</span>
+  );
+}</code></pre>
+
+  <h2>Default Props <span class="tag concept">Concept</span></h2>
+  <pre><code><span class="cmt">// Set defaults directly in the destructure</span>
+<span class="kw">function</span> <span class="fn">Button</span>({ label = <span class="str">"Click me"</span>, variant = <span class="str">"primary"</span>, onClick }) {
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;button</span>
+      <span class="attr">className</span>={<span class="str">`btn btn-</span>${variant}<span class="str">`</span>}
+      <span class="attr">onClick</span>={onClick}
+    <span class="tag-c">&gt;</span>
+      {label}
+    <span class="tag-c">&lt;/button&gt;</span>
+  );
+}</code></pre>
+
+  <h2>The <code>children</code> Prop <span class="tag concept">Concept</span></h2>
+  <p>React has a special prop called <code>children</code> — it's whatever you put between your component's opening and closing tags.</p>
+
+  <pre><code><span class="cmt">// This is a layout wrapper component</span>
+<span class="kw">function</span> <span class="fn">Card</span>({ children, title }) {
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;div</span> <span class="attr">className</span>=<span class="str">"card"</span><span class="tag-c">&gt;</span>
+      <span class="tag-c">&lt;h3&gt;</span>{title}<span class="tag-c">&lt;/h3&gt;</span>
+      <span class="tag-c">&lt;div</span> <span class="attr">className</span>=<span class="str">"card-body"</span><span class="tag-c">&gt;</span>
+        {children}  <span class="cmt">{/* Renders whatever is inside &lt;Card&gt;...&lt;/Card&gt; */}</span>
+      <span class="tag-c">&lt;/div&gt;</span>
+    <span class="tag-c">&lt;/div&gt;</span>
+  );
+}
+
+<span class="cmt">// Usage:</span>
+<span class="tag-c">&lt;Card</span> <span class="attr">title</span>=<span class="str">"User Info"</span><span class="tag-c">&gt;</span>
+  <span class="tag-c">&lt;p&gt;</span>Name: Sarah<span class="tag-c">&lt;/p&gt;</span>
+  <span class="tag-c">&lt;p&gt;</span>Role: Developer<span class="tag-c">&lt;/p&gt;</span>
+<span class="tag-c">&lt;/Card&gt;</span></code></pre>
+
+  <h2>Mini Task <span class="tag task">Task</span></h2>
+  <div class="box task">
+    <div class="box-label">🎯 Do This Now (25 min)</div>
+    <ol>
+      <li>Update your <code>ProfileCard</code> to accept: <code>name</code>, <code>title</code>, <code>location</code>, <code>imageUrl</code> as props</li>
+      <li>Create a <code>Badge</code> component that accepts a <code>label</code> prop and renders a colored pill</li>
+      <li>Create a generic <code>Card</code> wrapper component using <code>children</code></li>
+      <li>Render 3 different ProfileCards in App.jsx each with different data</li>
+    </ol>
+  </div>
+
+  <a class="nav-link-btn" onclick="show('state')">Next: State →</a>
+</section>
+
+<!-- ========== STATE ========== -->
+<section id="state">
+  <div class="day-header">
+    <div class="day-number">03</div>
+    <div class="day-info">
+      <h1>State with useState <span class="badge day1">Day 1</span></h1>
+      <div class="subtitle">Data that lives inside a component and drives re-renders</div>
+    </div>
+  </div>
+
+  <h2>The Problem State Solves <span class="tag concept">Concept</span></h2>
+
+  <p>Props are <em>read-only</em> — you can't change them from inside a component. When you need data that <em>changes over time</em> (a counter, a toggle, user input), you need <strong>state</strong>.</p>
+
+  <div class="box why">
+    <div class="box-label">💡 The Key Rule</div>
+    When state changes, React automatically re-renders the component with the new value. You never touch the DOM yourself. This is the entire value proposition of React.
+  </div>
+
+  <pre><code><span class="file-label">Counter.jsx</span>
+<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;  <span class="cmt">// Always import from react</span>
+
+<span class="kw">function</span> <span class="fn">Counter</span>() {
+  <span class="cmt">// useState(initialValue) returns [currentValue, setterFunction]</span>
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;div&gt;</span>
+      <span class="tag-c">&lt;p&gt;</span>Count: {count}<span class="tag-c">&lt;/p&gt;</span>
+      <span class="tag-c">&lt;button</span> <span class="attr">onClick</span>={() => <span class="fn">setCount</span>(count + <span class="num">1</span>)}<span class="tag-c">&gt;</span>+<span class="tag-c">&lt;/button&gt;</span>
+      <span class="tag-c">&lt;button</span> <span class="attr">onClick</span>={() => <span class="fn">setCount</span>(count - <span class="num">1</span>)}<span class="tag-c">&gt;</span>-<span class="tag-c">&lt;/button&gt;</span>
+      <span class="tag-c">&lt;button</span> <span class="attr">onClick</span>={() => <span class="fn">setCount</span>(<span class="num">0</span>)}<span class="tag-c">&gt;</span>Reset<span class="tag-c">&lt;/button&gt;</span>
+    <span class="tag-c">&lt;/div&gt;</span>
+  );
+}</code></pre>
+
+  <h2>State with Objects <span class="tag concept">Concept</span></h2>
+  <p>When your state is an object, <strong>never mutate it directly</strong>. Always create a new object using the spread operator <code>...</code>:</p>
+
+  <pre><code><span class="kw">const</span> [user, setUser] = <span class="fn">useState</span>({
+  name: <span class="str">""</span>,
+  email: <span class="str">""</span>,
+  age: <span class="num">0</span>
+});
+
+<span class="cmt">// ❌ WRONG — mutating state directly (won't trigger re-render)</span>
+user.name = <span class="str">"Sarah"</span>;
+<span class="fn">setUser</span>(user);
+
+<span class="cmt">// ✅ CORRECT — create a new object, spread old values, override what changed</span>
+<span class="fn">setUser</span>({ ...user, name: <span class="str">"Sarah"</span> });
+
+<span class="cmt">// ✅ CORRECT — using functional update (when new state depends on old state)</span>
+<span class="fn">setUser</span>(prev => ({ ...prev, name: <span class="str">"Sarah"</span> }));</code></pre>
+
+  <h2>State with Arrays <span class="tag concept">Concept</span></h2>
+  <pre><code><span class="kw">const</span> [items, setItems] = <span class="fn">useState</span>([]);
+
+<span class="cmt">// Add an item</span>
+<span class="fn">setItems</span>(prev => [...prev, newItem]);
+
+<span class="cmt">// Remove an item</span>
+<span class="fn">setItems</span>(prev => prev.<span class="fn">filter</span>(item => item.id !== targetId));
+
+<span class="cmt">// Update one item</span>
+<span class="fn">setItems</span>(prev => prev.<span class="fn">map</span>(item =>
+  item.id === targetId ? { ...item, done: <span class="kw">true</span> } : item
+));</code></pre>
+
+  <h2>Where To Put State? <span class="tag concept">Concept</span></h2>
+  <div class="box why">
+    <div class="box-label">📍 The Rule of Thumb</div>
+    Put state in the <strong>lowest common ancestor</strong> of all components that need it. If only one component needs the state, keep it there. If a sibling needs it too, lift it up to the parent.
+  </div>
+
+  <h2>Mini Task <span class="tag task">Task</span></h2>
+  <div class="box task">
+    <div class="box-label">🎯 Do This Now (30 min)</div>
+    <ol>
+      <li>Build a <code>LikeButton</code> component: starts at 0, increments on click, shows current count</li>
+      <li>Build a <code>Toggle</code> component: switches between "Show" and "Hide" and conditionally renders a paragraph of text</li>
+      <li>Build a simple <code>TaskList</code>: has an input + "Add" button. Tasks appear as a list. Each task has a delete button. Bonus: add a "mark complete" toggle per task.</li>
+    </ol>
+  </div>
+
+  <a class="nav-link-btn" onclick="show('events')">Next: Events & Forms →</a>
+</section>
+
+<!-- ========== EVENTS ========== -->
+<section id="events">
+  <div class="day-header">
+    <div class="day-number">04</div>
+    <div class="day-info">
+      <h1>Events & Forms <span class="badge day1">Day 1</span></h1>
+      <div class="subtitle">Handling user interaction in React</div>
+    </div>
+  </div>
+
+  <h2>Event Handling <span class="tag concept">Concept</span></h2>
+  <p>Events in React are camelCase and take a function, not a string:</p>
+
+  <div class="two-col">
+    <div>
+      <h3>HTML</h3>
+      <pre><code><span class="tag-c">&lt;button</span>
+  <span class="attr">onclick</span>=<span class="str">"handleClick()"</span>
+<span class="tag-c">&gt;</span>Click<span class="tag-c">&lt;/button&gt;</span></code></pre>
+    </div>
+    <div>
+      <h3>JSX</h3>
+      <pre><code><span class="tag-c">&lt;button</span>
+  <span class="attr">onClick</span>={handleClick}
+<span class="tag-c">&gt;</span>Click<span class="tag-c">&lt;/button&gt;</span></code></pre>
+    </div>
+  </div>
+
+  <pre><code><span class="kw">function</span> <span class="fn">MyButton</span>() {
+  <span class="kw">const</span> <span class="fn">handleClick</span> = (e) => {
+    e.<span class="fn">preventDefault</span>();  <span class="cmt">// Works the same as vanilla JS</span>
+    console.<span class="fn">log</span>(<span class="str">"clicked!"</span>, e.target);
+  };
+
+  <span class="kw">return</span> <span class="tag-c">&lt;button</span> <span class="attr">onClick</span>={handleClick}<span class="tag-c">&gt;</span>Click Me<span class="tag-c">&lt;/button&gt;</span>;
+}</code></pre>
+
+  <h2>Controlled Forms <span class="tag concept">Concept</span></h2>
+
+  <p>In React, form inputs are <strong>controlled</strong> — you store the input's value in state, and feed it back into the input. React owns the value, not the DOM.</p>
+
+  <pre><code><span class="file-label">LoginForm.jsx</span>
+<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">LoginForm</span>() {
+  <span class="kw">const</span> [formData, setFormData] = <span class="fn">useState</span>({
+    email: <span class="str">""</span>,
+    password: <span class="str">""</span>
+  });
+
+  <span class="kw">const</span> <span class="fn">handleChange</span> = (e) => {
+    <span class="cmt">// e.target.name matches the input's name attribute</span>
+    <span class="fn">setFormData</span>(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  <span class="kw">const</span> <span class="fn">handleSubmit</span> = (e) => {
+    e.<span class="fn">preventDefault</span>();
+    console.<span class="fn">log</span>(<span class="str">"Submitted:"</span>, formData);
+    <span class="cmt">// Make API call here</span>
+  };
+
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;form</span> <span class="attr">onSubmit</span>={handleSubmit}<span class="tag-c">&gt;</span>
+      <span class="tag-c">&lt;input</span>
+        <span class="attr">type</span>=<span class="str">"email"</span>
+        <span class="attr">name</span>=<span class="str">"email"</span>
+        <span class="attr">value</span>={formData.email}
+        <span class="attr">onChange</span>={handleChange}
+        <span class="attr">placeholder</span>=<span class="str">"Email"</span>
+      <span class="tag-c">/&gt;</span>
+      <span class="tag-c">&lt;input</span>
+        <span class="attr">type</span>=<span class="str">"password"</span>
+        <span class="attr">name</span>=<span class="str">"password"</span>
+        <span class="attr">value</span>={formData.password}
+        <span class="attr">onChange</span>={handleChange}
+        <span class="attr">placeholder</span>=<span class="str">"Password"</span>
+      <span class="tag-c">/&gt;</span>
+      <span class="tag-c">&lt;button</span> <span class="attr">type</span>=<span class="str">"submit"</span><span class="tag-c">&gt;</span>Login<span class="tag-c">&lt;/button&gt;</span>
+    <span class="tag-c">&lt;/form&gt;</span>
+  );
+}</code></pre>
+
+  <h2>Mini Task <span class="tag task">Task</span></h2>
+  <div class="box task">
+    <div class="box-label">🎯 Do This Now (25 min)</div>
+    Build a <code>SearchBar</code> component: an input field that filters a hardcoded list of 6 country names as you type. The filtered results should render below the input in real-time.
+    <br><br>
+    <strong>Concepts used:</strong> state, onChange, array.filter(), conditional rendering
+  </div>
+
+  <a class="nav-link-btn" onclick="show('lists')">Next: Lists & Keys →</a>
+</section>
+
+<!-- ========== LISTS ========== -->
+<section id="lists">
+  <div class="day-header">
+    <div class="day-number">05</div>
+    <div class="day-info">
+      <h1>Lists & Keys <span class="badge day1">Day 1</span></h1>
+      <div class="subtitle">Rendering dynamic collections of data</div>
+    </div>
+  </div>
+
+  <h2>Rendering Lists <span class="tag concept">Concept</span></h2>
+
+  <p>Use <code>.map()</code> to convert an array of data into an array of JSX elements:</p>
+
+  <pre><code><span class="kw">const</span> users = [
+  { id: <span class="num">1</span>, name: <span class="str">"Sarah"</span>, role: <span class="str">"Developer"</span> },
+  { id: <span class="num">2</span>, name: <span class="str">"Ali"</span>, role: <span class="str">"Designer"</span> },
+  { id: <span class="num">3</span>, name: <span class="str">"Zara"</span>, role: <span class="str">"Manager"</span> },
+];
+
+<span class="kw">function</span> <span class="fn">UserList</span>() {
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;ul&gt;</span>
+      {users.<span class="fn">map</span>(user => (
+        <span class="cmt">{/* key must be unique and stable — use an ID, not the index */}</span>
+        <span class="tag-c">&lt;li</span> <span class="attr">key</span>={user.id}<span class="tag-c">&gt;</span>
+          <span class="tag-c">&lt;strong&gt;</span>{user.name}<span class="tag-c">&lt;/strong&gt;</span> — {user.role}
+        <span class="tag-c">&lt;/li&gt;</span>
+      ))}
+    <span class="tag-c">&lt;/ul&gt;</span>
+  );
+}</code></pre>
+
+  <div class="box mistake">
+    <div class="box-label">⚠ Common Mistake: Using Index as Key</div>
+    <p><code>key={index}</code> causes subtle bugs when list items are deleted, reordered, or filtered. <strong>Always use a unique ID from your data.</strong> If your data has no ID, use a library like <code>nanoid</code> to generate one when creating items.</p>
+  </div>
+
+  <h2>Conditional Rendering <span class="tag concept">Concept</span></h2>
+  <pre><code><span class="kw">function</span> <span class="fn">UserList</span>({ users, isLoading }) {
+  <span class="cmt">// Early return for loading state</span>
+  <span class="kw">if</span> (isLoading) <span class="kw">return</span> <span class="tag-c">&lt;p&gt;</span>Loading...<span class="tag-c">&lt;/p&gt;</span>;
+
+  <span class="cmt">// Handle empty state</span>
+  <span class="kw">if</span> (users.length === <span class="num">0</span>) <span class="kw">return</span> <span class="tag-c">&lt;p&gt;</span>No users found.<span class="tag-c">&lt;/p&gt;</span>;
+
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;ul&gt;</span>
+      {users.<span class="fn">map</span>(user => (
+        <span class="tag-c">&lt;li</span> <span class="attr">key</span>={user.id}<span class="tag-c">&gt;</span>
+          {user.name}
+          {<span class="cmt">/* &&  renders right side only if left side is truthy */</span>}
+          {user.isAdmin && <span class="tag-c">&lt;span&gt;</span>👑 Admin<span class="tag-c">&lt;/span&gt;</span>}
+        <span class="tag-c">&lt;/li&gt;</span>
+      ))}
+    <span class="tag-c">&lt;/ul&gt;</span>
+  );
+}</code></pre>
+
+  <h2>Mini Task <span class="tag task">Task</span></h2>
+  <div class="box task">
+    <div class="box-label">🎯 Do This Now (30 min)</div>
+    Build a <code>ProductGrid</code> component:
+    <ol>
+      <li>Start with a hardcoded array of 5 products (id, name, price, category, inStock)</li>
+      <li>Render each as a card using your <code>Card</code> component from earlier</li>
+      <li>Show a "Sold Out" badge if <code>inStock</code> is false</li>
+      <li>Add filter buttons for "All", "Electronics", "Clothing" etc that filter the list</li>
+    </ol>
+  </div>
+
+  <a class="nav-link-btn" onclick="show('d1project')">Day 1 Project →</a>
+</section>
+
+<!-- ========== DAY 1 PROJECT ========== -->
+<section id="d1project">
+  <div class="day-header">
+    <div class="day-number">D1</div>
+    <div class="day-info">
+      <h1>Day 1 Project <span class="badge day1">Day 1</span></h1>
+      <div class="subtitle">Build a Team Directory — apply everything you learned</div>
+    </div>
+  </div>
+
+  <h2>The Build <span class="tag project">Project</span></h2>
+
+  <p>Build a <strong>Team Directory</strong> page. It should have:</p>
+  <ul>
+    <li>A search bar to filter team members by name</li>
+    <li>A department filter (All / Engineering / Design / Marketing)</li>
+    <li>Cards for each team member (avatar, name, role, department)</li>
+    <li>A "Follow" toggle button per card (liked/not liked state)</li>
+  </ul>
+
+  <h2>Reference Implementation</h2>
+
+  <pre><code><span class="file-label">src/data/team.js</span>
+<span class="kw">export const</span> teamMembers = [
+  { id: <span class="num">1</span>, name: <span class="str">"Sarah Ahmed"</span>, role: <span class="str">"Lead Developer"</span>, dept: <span class="str">"Engineering"</span>, avatar: <span class="str">"https://i.pravatar.cc/80?img=1"</span> },
+  { id: <span class="num">2</span>, name: <span class="str">"Ali Khan"</span>, role: <span class="str">"UI Designer"</span>, dept: <span class="str">"Design"</span>, avatar: <span class="str">"https://i.pravatar.cc/80?img=2"</span> },
+  { id: <span class="num">3</span>, name: <span class="str">"Zara Malik"</span>, role: <span class="str">"Marketing Manager"</span>, dept: <span class="str">"Marketing"</span>, avatar: <span class="str">"https://i.pravatar.cc/80?img=3"</span> },
+  { id: <span class="num">4</span>, name: <span class="str">"Omar Siddiq"</span>, role: <span class="str">"Backend Developer"</span>, dept: <span class="str">"Engineering"</span>, avatar: <span class="str">"https://i.pravatar.cc/80?img=4"</span> },
+  { id: <span class="num">5</span>, name: <span class="str">"Hana Rauf"</span>, role: <span class="str">"UX Researcher"</span>, dept: <span class="str">"Design"</span>, avatar: <span class="str">"https://i.pravatar.cc/80?img=5"</span> },
+];</code></pre>
+
+  <pre><code><span class="file-label">src/components/MemberCard.jsx</span>
+<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">MemberCard</span>({ name, role, dept, avatar }) {
+  <span class="kw">const</span> [isFollowing, setIsFollowing] = <span class="fn">useState</span>(<span class="kw">false</span>);
+
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;div</span> <span class="attr">className</span>=<span class="str">"member-card"</span><span class="tag-c">&gt;</span>
+      <span class="tag-c">&lt;img</span> <span class="attr">src</span>={avatar} <span class="attr">alt</span>={name} <span class="tag-c">/&gt;</span>
+      <span class="tag-c">&lt;h3&gt;</span>{name}<span class="tag-c">&lt;/h3&gt;</span>
+      <span class="tag-c">&lt;p&gt;</span>{role}<span class="tag-c">&lt;/p&gt;</span>
+      <span class="tag-c">&lt;span</span> <span class="attr">className</span>=<span class="str">"dept-badge"</span><span class="tag-c">&gt;</span>{dept}<span class="tag-c">&lt;/span&gt;</span>
+      <span class="tag-c">&lt;button</span>
+        <span class="attr">onClick</span>={() => <span class="fn">setIsFollowing</span>(prev => !prev)}
+        <span class="attr">className</span>={isFollowing ? <span class="str">"btn-following"</span> : <span class="str">"btn-follow"</span>}
+      <span class="tag-c">&gt;</span>
+        {isFollowing ? <span class="str">"Following ✓"</span> : <span class="str">"Follow"</span>}
+      <span class="tag-c">&lt;/button&gt;</span>
+    <span class="tag-c">&lt;/div&gt;</span>
+  );
+}
+
+<span class="kw">export default</span> MemberCard;</code></pre>
+
+  <pre><code><span class="file-label">src/App.jsx</span>
+<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> { teamMembers } <span class="kw">from</span> <span class="str">'./data/team'</span>;
+<span class="kw">import</span> MemberCard <span class="kw">from</span> <span class="str">'./components/MemberCard'</span>;
+
+<span class="kw">const</span> DEPTS = [<span class="str">"All"</span>, <span class="str">"Engineering"</span>, <span class="str">"Design"</span>, <span class="str">"Marketing"</span>];
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [search, setSearch] = <span class="fn">useState</span>(<span class="str">""</span>);
+  <span class="kw">const</span> [activeDept, setActiveDept] = <span class="fn">useState</span>(<span class="str">"All"</span>);
+
+  <span class="kw">const</span> filtered = teamMembers
+    .<span class="fn">filter</span>(m => activeDept === <span class="str">"All"</span> || m.dept === activeDept)
+    .<span class="fn">filter</span>(m => m.name.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(search.<span class="fn">toLowerCase</span>()));
+
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;div</span> <span class="attr">className</span>=<span class="str">"app"</span><span class="tag-c">&gt;</span>
+      <span class="tag-c">&lt;h1&gt;</span>Team Directory<span class="tag-c">&lt;/h1&gt;</span>
+
+      <span class="tag-c">&lt;input</span>
+        <span class="attr">placeholder</span>=<span class="str">"Search by name..."</span>
+        <span class="attr">value</span>={search}
+        <span class="attr">onChange</span>={e => <span class="fn">setSearch</span>(e.target.value)}
+      <span class="tag-c">/&gt;</span>
+
+      <span class="tag-c">&lt;div</span> <span class="attr">className</span>=<span class="str">"dept-filters"</span><span class="tag-c">&gt;</span>
+        {DEPTS.<span class="fn">map</span>(dept => (
+          <span class="tag-c">&lt;button</span>
+            <span class="attr">key</span>={dept}
+            <span class="attr">className</span>={activeDept === dept ? <span class="str">"active"</span> : <span class="str">""</span>}
+            <span class="attr">onClick</span>={() => <span class="fn">setActiveDept</span>(dept)}
+          <span class="tag-c">&gt;</span>
+            {dept}
+          <span class="tag-c">&lt;/button&gt;</span>
+        ))}
+      <span class="tag-c">&lt;/div&gt;</span>
+
+      <span class="tag-c">&lt;div</span> <span class="attr">className</span>=<span class="str">"grid"</span><span class="tag-c">&gt;</span>
+        {filtered.<span class="fn">map</span>(member => (
+          <span class="tag-c">&lt;MemberCard</span> <span class="attr">key</span>={member.id} {...member} <span class="tag-c">/&gt;</span>
+        ))}
+      <span class="tag-c">&lt;/div&gt;</span>
+
+      {filtered.length === <span class="num">0</span> && <span class="tag-c">&lt;p&gt;</span>No members found.<span class="tag-c">&lt;/p&gt;</span>}
+    <span class="tag-c">&lt;/div&gt;</span>
+  );
+}
+
+<span class="kw">export default</span> App;</code></pre>
+
+  <div class="box tip">
+    <div class="box-label">✓ You've Covered Day 1</div>
+    You now know: JSX, Components, Props, State, Events, Lists. That's the core 80% of what you'll use daily. Day 2 is about applying this professionally.
+  </div>
+
+  <a class="nav-link-btn" onclick="show('figma')">Start Day 2 →</a>
+</section>
+
+<!-- ========== FIGMA ========== -->
+<section id="figma">
+  <div class="day-header">
+    <div class="day-number">06</div>
+    <div class="day-info">
+      <h1>Figma → React <span class="badge day2">Day 2</span></h1>
+      <div class="subtitle">A repeatable process for converting any design to components</div>
+    </div>
+  </div>
+
+  <h2>The 5-Step Process <span class="tag concept">Concept</span></h2>
+
+  <ol class="steps">
+    <li>
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Inspect & Extract Values</strong>
+        <p>Open Figma. Click on elements. Copy exact values: font-size, font-weight, color hex codes, border-radius, spacing. Use Dev Mode if available. Define these as CSS variables in a <code>variables.css</code> or in your CSS file upfront.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>Identify Repeating Patterns</strong>
+        <p>Scan the whole design. Circle anything that appears more than once — those are your components. A button that appears 8 times should be one <code>Button</code> component, not 8 separate buttons.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Break Into Component Hierarchy</strong>
+        <p>Draw boxes around groups of UI. Start at the page level → sections → cards → small atoms. Give each box a component name. Bigger = parent, smaller = children.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <strong>Build Bottom-Up</strong>
+        <p>Start with the smallest, most reusable pieces (Button, Badge, Avatar) and work outward to larger containers. Never start with the whole page.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <strong>Wire in Real Data</strong>
+        <p>Replace hardcoded text with props. Any text you see in the design that would change between instances becomes a prop. Then pass actual data from a data file or API.</p>
+      </div>
+    </li>
+  </ol>
+
+  <h2>Practical Example: Figma Card → React <span class="tag concept">Concept</span></h2>
+
+  <p>Suppose Figma shows a "Product Card" with: image, product name, price, rating stars, and an "Add to Cart" button. Here's how you translate it:</p>
+
+  <pre><code><span class="file-label">Figma inspection tells you:</span>
+<span class="cmt">/* Card: width 280px, border-radius 12px, background #fff, shadow: 0 2px 8px rgba(0,0,0,0.1) */
+/* Title: Poppins 16px Bold, color #1a1a2e */
+/* Price: Poppins 18px 600, color #e94560 */
+/* Button: height 44px, border-radius 8px, background #e94560, text white 14px */</span></code></pre>
+
+  <pre><code><span class="file-label">src/components/ProductCard.jsx</span>
+<span class="kw">function</span> <span class="fn">ProductCard</span>({ image, name, price, rating, onAddToCart }) {
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;div</span> <span class="attr">className</span>=<span class="str">"product-card"</span><span class="tag-c">&gt;</span>
+      <span class="tag-c">&lt;img</span> <span class="attr">src</span>={image} <span class="attr">alt</span>={name} <span class="attr">className</span>=<span class="str">"product-image"</span> <span class="tag-c">/&gt;</span>
+
+      <span class="tag-c">&lt;div</span> <span class="attr">className</span>=<span class="str">"product-info"</span><span class="tag-c">&gt;</span>
+        <span class="tag-c">&lt;h3</span> <span class="attr">className</span>=<span class="str">"product-name"</span><span class="tag-c">&gt;</span>{name}<span class="tag-c">&lt;/h3&gt;</span>
+
+        <span class="tag-c">&lt;div</span> <span class="attr">className</span>=<span class="str">"product-rating"</span><span class="tag-c">&gt;</span>
+          {[<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>].<span class="fn">map</span>(star => (
+            <span class="tag-c">&lt;span</span> <span class="attr">key</span>={star} <span class="attr">className</span>={star <= rating ? <span class="str">"star filled"</span> : <span class="str">"star"</span>}<span class="tag-c">&gt;</span>★<span class="tag-c">&lt;/span&gt;</span>
+          ))}
+        <span class="tag-c">&lt;/div&gt;</span>
+
+        <span class="tag-c">&lt;p</span> <span class="attr">className</span>=<span class="str">"product-price"</span><span class="tag-c">&gt;</span>${price.<span class="fn">toFixed</span>(<span class="num">2</span>)}<span class="tag-c">&lt;/p&gt;</span>
+
+        <span class="tag-c">&lt;button</span>
+          <span class="attr">className</span>=<span class="str">"btn-add-to-cart"</span>
+          <span class="attr">onClick</span>={onAddToCart}
+        <span class="tag-c">&gt;</span>
+          Add to Cart
+        <span class="tag-c">&lt;/button&gt;</span>
+      <span class="tag-c">&lt;/div&gt;</span>
+    <span class="tag-c">&lt;/div&gt;</span>
+  );
+}
+
+<span class="kw">export default</span> ProductCard;</code></pre>
+
+  <div class="box tip">
+    <div class="box-label">💡 Pro Tip: CSS Variables</div>
+    Put ALL Figma design tokens (colors, font sizes, spacing) into CSS custom properties at the top of your main CSS file. This makes global changes instant.
+    <pre style="margin-top:10px"><code><span class="file-label">src/index.css</span>
+:root {
+  --color-primary: #e94560;
+  --color-text: #1a1a2e;
+  --color-text-muted: #6c757d;
+  --font-size-lg: 18px;
+  --font-size-md: 16px;
+  --radius-card: 12px;
+  --radius-btn: 8px;
+}</code></pre>
+  </div>
+
+  <a class="nav-link-btn" onclick="show('breakdown')">Next: Breaking UI Apart →</a>
+</section>
+
+<!-- ========== BREAKDOWN ========== -->
+<section id="breakdown">
+  <div class="day-header">
+    <div class="day-number">07</div>
+    <div class="day-info">
+      <h1>Breaking UI Into Components <span class="badge day2">Day 2</span></h1>
+      <div class="subtitle">The skill that separates juniors from mid-level developers</div>
+    </div>
+  </div>
+
+  <h2>The Atomic Design Mental Model <span class="tag concept">Concept</span></h2>
+
+  <p>Think of your UI in 3 levels. This isn't a rigid rule — it's a thinking tool:</p>
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="c-title">Atoms (tiny, reusable)</div>
+      <div class="c-desc">Button, Input, Badge, Avatar, Spinner, Icon. Can't be broken down further. Used everywhere.</div>
+    </div>
+    <div class="concept-card">
+      <div class="c-title">Molecules (composed)</div>
+      <div class="c-desc">SearchBar (Input + Button), UserCard (Avatar + name + role), FormField (Label + Input + Error).</div>
+    </div>
+    <div class="concept-card">
+      <div class="c-title">Organisms (sections)</div>
+      <div class="c-desc">Header, Sidebar, ProductGrid, UserList, HeroSection. Full self-contained sections of a page.</div>
+    </div>
+    <div class="concept-card">
+      <div class="c-title">Pages</div>
+      <div class="c-desc">HomePage, ProfilePage, DashboardPage. Compose organisms. Handle routing and top-level data fetching.</div>
+    </div>
+  </div>
+
+  <h2>Worked Example: E-commerce Header <span class="tag concept">Concept</span></h2>
+
+  <p>Given this Figma header: Logo | Search Bar | Cart icon with count | User avatar | Nav links</p>
+
+  <pre><code><span class="cmt">// How to break it down:</span>
+
+<span class="cmt">// Atoms (reusable, no domain logic)</span>
+<span class="tag-c">&lt;Logo /&gt;</span>                      <span class="cmt">// just the brand mark</span>
+<span class="tag-c">&lt;Avatar</span> <span class="attr">src</span> <span class="attr">alt</span> <span class="tag-c">/&gt;</span>             <span class="cmt">// circular image</span>
+<span class="tag-c">&lt;IconButton</span> <span class="attr">icon</span> <span class="attr">badge</span> <span class="tag-c">/&gt;</span>      <span class="cmt">// icon with optional count</span>
+
+<span class="cmt">// Molecules (combine atoms)</span>
+<span class="tag-c">&lt;SearchBar</span> <span class="attr">onSearch</span> <span class="tag-c">/&gt;</span>         <span class="cmt">// input + search button + results</span>
+<span class="tag-c">&lt;NavLinks</span> <span class="attr">links</span> <span class="tag-c">/&gt;</span>             <span class="cmt">// list of navigation links</span>
+<span class="tag-c">&lt;CartButton</span> <span class="attr">count</span> <span class="tag-c">/&gt;</span>           <span class="cmt">// IconButton + cart count</span>
+<span class="tag-c">&lt;UserMenu</span> <span class="attr">user</span> <span class="tag-c">/&gt;</span>              <span class="cmt">// Avatar + dropdown menu</span>
+
+<span class="cmt">// Organism: the full header</span>
+<span class="kw">function</span> <span class="fn">Header</span>({ user, cartCount }) {
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;header</span> <span class="attr">className</span>=<span class="str">"header"</span><span class="tag-c">&gt;</span>
+      <span class="tag-c">&lt;Logo /&gt;</span>
+      <span class="tag-c">&lt;SearchBar</span> <span class="attr">onSearch</span>={handleSearch} <span class="tag-c">/&gt;</span>
+      <span class="tag-c">&lt;nav&gt;</span>
+        <span class="tag-c">&lt;NavLinks</span> <span class="attr">links</span>={NAV_LINKS} <span class="tag-c">/&gt;</span>
+        <span class="tag-c">&lt;CartButton</span> <span class="attr">count</span>={cartCount} <span class="tag-c">/&gt;</span>
+        <span class="tag-c">&lt;UserMenu</span> <span class="attr">user</span>={user} <span class="tag-c">/&gt;</span>
+      <span class="tag-c">&lt;/nav&gt;</span>
+    <span class="tag-c">&lt;/header&gt;</span>
+  );
+}</code></pre>
+
+  <h2>The Rule for Splitting <span class="tag concept">Concept</span></h2>
+
+  <p>Split a component when <em>any</em> of these are true:</p>
+  <ul>
+    <li>It can be reused in 2+ places</li>
+    <li>It has its own local state that doesn't affect others</li>
+    <li>The file is getting long (over ~80 lines of JSX is a code smell)</li>
+    <li>It represents a visually distinct "thing" in the design</li>
+  </ul>
+
+  <a class="nav-link-btn" onclick="show('structure')">Next: Folder Structure →</a>
+</section>
+
+<!-- ========== STRUCTURE ========== -->
+<section id="structure">
+  <div class="day-header">
+    <div class="day-number">08</div>
+    <div class="day-info">
+      <h1>Professional Folder Structure <span class="badge day2">Day 2</span></h1>
+      <div class="subtitle">How real-world React projects are organized</div>
+    </div>
+  </div>
+
+  <h2>The Structure <span class="tag concept">Concept</span></h2>
+
+  <div class="tree">
+<span class="folder">src/</span>
+├── <span class="folder">assets/</span>           <span class="ann">← images, fonts, icons (static files)</span>
+│   ├── images/
+│   └── icons/
+│
+├── <span class="folder highlight">components/</span>      <span class="ann">← reusable UI pieces (atoms + molecules)</span>
+│   ├── <span class="folder">ui/</span>           <span class="ann">← pure UI atoms: Button, Input, Badge, Card</span>
+│   │   ├── <span class="file">Button.jsx</span>
+│   │   ├── <span class="file">Button.module.css</span>
+│   │   ├── <span class="file">Input.jsx</span>
+│   │   └── <span class="file">Badge.jsx</span>
+│   ├── <span class="folder">layout/</span>       <span class="ann">← structural: Header, Footer, Sidebar</span>
+│   │   ├── <span class="file">Header.jsx</span>
+│   │   ├── <span class="file">Sidebar.jsx</span>
+│   │   └── <span class="file">Footer.jsx</span>
+│   └── <span class="folder">shared/</span>       <span class="ann">← domain molecules: UserCard, SearchBar</span>
+│       ├── <span class="file">UserCard.jsx</span>
+│       └── <span class="file">SearchBar.jsx</span>
+│
+├── <span class="folder highlight">pages/</span>           <span class="ann">← one file per route (compose organisms)</span>
+│   ├── <span class="file">HomePage.jsx</span>
+│   ├── <span class="file">ProfilePage.jsx</span>
+│   └── <span class="file">DashboardPage.jsx</span>
+│
+├── <span class="folder highlight">hooks/</span>           <span class="ann">← custom hooks: useDebounce, useLocalStorage</span>
+│   └── <span class="file">useDebounce.js</span>
+│
+├── <span class="folder highlight">services/</span>        <span class="ann">← API calls (never write fetch() inside a component)</span>
+│   ├── <span class="file">api.js</span>        <span class="ann">← base axios/fetch setup</span>
+│   └── <span class="file">userService.js</span>
+│
+├── <span class="folder">utils/</span>           <span class="ann">← pure utility functions: formatDate, truncate</span>
+│   └── <span class="file">formatters.js</span>
+│
+├── <span class="folder">data/</span>            <span class="ann">← hardcoded data / mock data / constants</span>
+│   └── <span class="file">mockUsers.js</span>
+│
+├── <span class="folder">context/</span>         <span class="ann">← React context for global state (later)</span>
+│   └── <span class="file">AuthContext.jsx</span>
+│
+├── <span class="file highlight">App.jsx</span>          <span class="ann">← root component, routing lives here</span>
+├── <span class="file">main.jsx</span>         <span class="ann">← entry point (don't touch this)</span>
+└── <span class="file">index.css</span>        <span class="ann">← global styles + CSS variables</span>
+  </div>
+
+  <h2>CSS Modules — The Professional Way to Style <span class="tag concept">Concept</span></h2>
+
+  <p>Avoid global CSS. Use CSS Modules — every component gets its own scoped styles, so class names never clash.</p>
+
+  <div class="two-col">
+    <div>
+      <pre><code><span class="file-label">Button.module.css</span>
+<span class="fn">.btn</span> {
+  padding: <span class="num">10px 20px</span>;
+  border-radius: <span class="num">8px</span>;
+  border: none;
+  cursor: pointer;
+  font-size: <span class="num">14px</span>;
+  font-weight: <span class="num">500</span>;
+}
+
+<span class="fn">.primary</span> {
+  background: <span class="num">var</span>(--color-primary);
+  color: white;
+}
+
+<span class="fn">.secondary</span> {
+  background: transparent;
+  border: <span class="num">1px</span> solid var(--color-primary);
+  color: var(--color-primary);
+}</code></pre>
+    </div>
+    <div>
+      <pre><code><span class="file-label">Button.jsx</span>
+<span class="kw">import</span> styles <span class="kw">from</span> <span class="str">'./Button.module.css'</span>;
+
+<span class="kw">function</span> <span class="fn">Button</span>({
+  label,
+  variant = <span class="str">"primary"</span>,
+  onClick,
+  disabled
+}) {
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;button</span>
+      <span class="attr">className</span>={
+        <span class="str">`</span>${styles.btn} ${styles[variant]}<span class="str">`</span>
+      }
+      <span class="attr">onClick</span>={onClick}
+      <span class="attr">disabled</span>={disabled}
+    <span class="tag-c">&gt;</span>
+      {label}
+    <span class="tag-c">&lt;/button&gt;</span>
+  );
+}
+
+<span class="kw">export default</span> Button;</code></pre>
+    </div>
+  </div>
+
+  <div class="box why">
+    <div class="box-label">💡 Why CSS Modules?</div>
+    When two developers on a team both write a class called <code>.card</code>, they overwrite each other's styles. CSS Modules automatically generate unique class names like <code>Button_btn__xK3p</code>, so this never happens.
+  </div>
+
+  <a class="nav-link-btn" onclick="show('useeffect')">Next: useEffect →</a>
+</section>
+
+<!-- ========== useEffect ========== -->
+<section id="useeffect">
+  <div class="day-header">
+    <div class="day-number">09</div>
+    <div class="day-info">
+      <h1>useEffect — The Basics <span class="badge day2">Day 2</span></h1>
+      <div class="subtitle">Running code in response to renders and data changes</div>
+    </div>
+  </div>
+
+  <h2>What Is useEffect? <span class="tag concept">Concept</span></h2>
+
+  <p><code>useEffect</code> runs code <em>after</em> a component renders. Use it for side effects — things that happen <em>outside</em> of rendering: fetching data, setting up event listeners, updating the document title.</p>
+
+  <pre><code><span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">UserProfile</span>({ userId }) {
+  <span class="kw">const</span> [user, setUser] = <span class="fn">useState</span>(<span class="kw">null</span>);
+  <span class="kw">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="kw">true</span>);
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="cmt">// This runs AFTER the component renders</span>
+    <span class="kw">const</span> <span class="fn">fetchUser</span> = <span class="kw">async</span> () => {
+      <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/api/users/</span>${userId}<span class="str">`</span>);
+      <span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();
+      <span class="fn">setUser</span>(data);
+      <span class="fn">setLoading</span>(<span class="kw">false</span>);
+    };
+
+    <span class="fn">fetchUser</span>();
+  }, [userId]); <span class="cmt">// ← Dependency array: re-runs when userId changes</span>
+
+  <span class="kw">if</span> (loading) <span class="kw">return</span> <span class="tag-c">&lt;p&gt;</span>Loading...<span class="tag-c">&lt;/p&gt;</span>;
+
+  <span class="kw">return</span> <span class="tag-c">&lt;div&gt;</span>{user.name}<span class="tag-c">&lt;/div&gt;</span>;
+}</code></pre>
+
+  <h2>The Dependency Array <span class="tag concept">Concept</span></h2>
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="c-title">No array: <code>useEffect(() => {})</code></div>
+      <div class="c-desc">Runs after EVERY render. Rarely what you want.</div>
+    </div>
+    <div class="concept-card">
+      <div class="c-title">Empty array: <code>useEffect(() => {}, [])</code></div>
+      <div class="c-desc">Runs ONCE on mount. Perfect for initial data fetch.</div>
+    </div>
+    <div class="concept-card">
+      <div class="c-title">With deps: <code>useEffect(() => {}, [id])</code></div>
+      <div class="c-desc">Runs on mount AND whenever <code>id</code> changes.</div>
+    </div>
+    <div class="concept-card">
+      <div class="c-title">Return a cleanup: <code>return () => {}</code></div>
+      <div class="c-desc">Runs before the component unmounts or before the effect re-runs. Use for timers, subscriptions.</div>
+    </div>
+  </div>
+
+  <div class="box mistake">
+    <div class="box-label">⚠ Beginner Trap: Infinite Loop</div>
+    <p>If you update state inside useEffect without a dependency array, it will loop forever — state update → re-render → effect runs → state update → ...</p>
+    <pre><code><span class="cmt">// ❌ INFINITE LOOP — no dependency array</span>
+<span class="fn">useEffect</span>(() => {
+  <span class="fn">setCount</span>(count + <span class="num">1</span>);
+});
+
+<span class="cmt">// ✅ Runs only once</span>
+<span class="fn">useEffect</span>(() => {
+  <span class="fn">setCount</span>(<span class="num">1</span>);
+}, []);</code></pre>
+  </div>
+
+  <h2>Mini Task <span class="tag task">Task</span></h2>
+  <div class="box task">
+    <div class="box-label">🎯 Do This Now (20 min)</div>
+    Fetch data from the free API: <code>https://jsonplaceholder.typicode.com/users</code>
+    <ol>
+      <li>Create a component that fetches this data on mount</li>
+      <li>Show a loading state while fetching</li>
+      <li>Render each user as a card with their name, email, and company</li>
+      <li>Handle the error case (wrap fetch in try/catch, show an error message)</li>
+    </ol>
+  </div>
+
+  <a class="nav-link-btn" onclick="show('d2project')">Day 2 Project →</a>
+</section>
+
+<!-- ========== DAY 2 PROJECT ========== -->
+<section id="d2project">
+  <div class="day-header">
+    <div class="day-number">D2</div>
+    <div class="day-info">
+      <h1>Day 2 Project <span class="badge day2">Day 2</span></h1>
+      <div class="subtitle">E-commerce product page — full professional structure</div>
+    </div>
+  </div>
+
+  <h2>The Build <span class="tag project">Project</span></h2>
+
+  <p>Build a simple <strong>Product Listing Page</strong> with a professional folder structure. No backend needed — use mock data.</p>
+
+  <p><strong>Features:</strong> Product grid, filter by category, sort by price, cart count in header, add/remove from cart.</p>
+
+  <h2>Folder Structure</h2>
+  <div class="tree">
+<span class="folder">src/</span>
+├── <span class="folder">components/</span>
+│   ├── <span class="folder">ui/</span>
+│   │   ├── <span class="file">Button.jsx</span>
+│   │   ├── <span class="file">Badge.jsx</span>
+│   │   └── <span class="file">Spinner.jsx</span>
+│   ├── <span class="folder">layout/</span>
+│   │   └── <span class="file highlight">Header.jsx</span>      <span class="ann">← logo + cart button with count</span>
+│   └── <span class="folder">shared/</span>
+│       ├── <span class="file highlight">ProductCard.jsx</span> <span class="ann">← image, name, price, Add to Cart btn</span>
+│       └── <span class="file highlight">FilterBar.jsx</span>  <span class="ann">← category buttons + sort dropdown</span>
+├── <span class="folder">pages/</span>
+│   └── <span class="file highlight">ShopPage.jsx</span>    <span class="ann">← composes everything, owns cart state</span>
+├── <span class="folder">data/</span>
+│   └── <span class="file">products.js</span>     <span class="ann">← mock product array</span>
+├── <span class="file">App.jsx</span>
+└── <span class="file">index.css</span>
+  </div>
+
+  <h2>Key Code: Cart State Flow</h2>
+
+  <pre><code><span class="file-label">src/pages/ShopPage.jsx</span>
+<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> Header <span class="kw">from</span> <span class="str">'../components/layout/Header'</span>;
+<span class="kw">import</span> FilterBar <span class="kw">from</span> <span class="str">'../components/shared/FilterBar'</span>;
+<span class="kw">import</span> ProductCard <span class="kw">from</span> <span class="str">'../components/shared/ProductCard'</span>;
+<span class="kw">import</span> { products } <span class="kw">from</span> <span class="str">'../data/products'</span>;
+
+<span class="kw">function</span> <span class="fn">ShopPage</span>() {
+  <span class="kw">const</span> [cart, setCart] = <span class="fn">useState</span>([]);
+  <span class="kw">const</span> [category, setCategory] = <span class="fn">useState</span>(<span class="str">"all"</span>);
+  <span class="kw">const</span> [sortBy, setSortBy] = <span class="fn">useState</span>(<span class="str">"default"</span>);
+
+  <span class="kw">const</span> <span class="fn">addToCart</span> = (product) => {
+    <span class="fn">setCart</span>(prev => {
+      <span class="kw">const</span> exists = prev.<span class="fn">find</span>(item => item.id === product.id);
+      <span class="kw">if</span> (exists) {
+        <span class="cmt">// Increase quantity if already in cart</span>
+        <span class="kw">return</span> prev.<span class="fn">map</span>(item =>
+          item.id === product.id
+            ? { ...item, qty: item.qty + <span class="num">1</span> }
+            : item
+        );
+      }
+      <span class="kw">return</span> [...prev, { ...product, qty: <span class="num">1</span> }];
+    });
+  };
+
+  <span class="kw">const</span> cartCount = cart.<span class="fn">reduce</span>((sum, item) => sum + item.qty, <span class="num">0</span>);
+
+  <span class="kw">const</span> filtered = products
+    .<span class="fn">filter</span>(p => category === <span class="str">"all"</span> || p.category === category)
+    .<span class="fn">sort</span>((a, b) => {
+      <span class="kw">if</span> (sortBy === <span class="str">"price-asc"</span>) <span class="kw">return</span> a.price - b.price;
+      <span class="kw">if</span> (sortBy === <span class="str">"price-desc"</span>) <span class="kw">return</span> b.price - a.price;
+      <span class="kw">return</span> <span class="num">0</span>;
+    });
+
+  <span class="kw">return</span> (
+    <span class="tag-c">&lt;div&gt;</span>
+      <span class="tag-c">&lt;Header</span> <span class="attr">cartCount</span>={cartCount} <span class="tag-c">/&gt;</span>
+      <span class="tag-c">&lt;main</span> <span class="attr">className</span>=<span class="str">"container"</span><span class="tag-c">&gt;</span>
+        <span class="tag-c">&lt;FilterBar</span>
+          <span class="attr">category</span>={category}
+          <span class="attr">onCategoryChange</span>={setCategory}
+          <span class="attr">sortBy</span>={sortBy}
+          <span class="attr">onSortChange</span>={setSortBy}
+        <span class="tag-c">/&gt;</span>
+        <span class="tag-c">&lt;div</span> <span class="attr">className</span>=<span class="str">"product-grid"</span><span class="tag-c">&gt;</span>
+          {filtered.<span class="fn">map</span>(product => (
+            <span class="tag-c">&lt;ProductCard</span>
+              <span class="attr">key</span>={product.id}
+              {...product}
+              <span class="attr">onAddToCart</span>={() => <span class="fn">addToCart</span>(product)}
+            <span class="tag-c">/&gt;</span>
+          ))}
+        <span class="tag-c">&lt;/div&gt;</span>
+      <span class="tag-c">&lt;/main&gt;</span>
+    <span class="tag-c">&lt;/div&gt;</span>
+  );
+}
+
+<span class="kw">export default</span> ShopPage;</code></pre>
+
+  <div class="box tip">
+    <div class="box-label">✓ What You Just Practiced</div>
+    Lifting state up, passing callbacks as props, derived state (filtered), composing real-world components, a professional folder structure. This is exactly what day-one professional work looks like.
+  </div>
+
+  <a class="nav-link-btn" onclick="show('mistakes')">Common Mistakes →</a>
+  <a class="nav-link-btn" onclick="show('checklist')">Readiness Checklist →</a>
+</section>
+
+<!-- ========== MISTAKES ========== -->
+<section id="mistakes">
+  <h1>Common Beginner Mistakes</h1>
+  <p class="subtitle">Avoid these and you'll look like you've been doing React for months.</p>
+
+  <h2>1. Mutating State Directly <span class="tag mistake">Mistake</span></h2>
+  <pre><code><span class="cmt">// ❌ WRONG — mutating the state array directly</span>
+<span class="kw">const</span> [items, setItems] = <span class="fn">useState</span>([<span class="str">'a'</span>, <span class="str">'b'</span>]);
+items.<span class="fn">push</span>(<span class="str">'c'</span>);         <span class="cmt">// React won't notice this change!</span>
+<span class="fn">setItems</span>(items);        <span class="cmt">// Same array reference → no re-render</span>
+
+<span class="cmt">// ✅ CORRECT — always create new array</span>
+<span class="fn">setItems</span>([...items, <span class="str">'c'</span>]);</code></pre>
+
+  <h2>2. Calling setState in Render <span class="tag mistake">Mistake</span></h2>
+  <pre><code><span class="cmt">// ❌ WRONG — this causes an infinite render loop</span>
+<span class="kw">function</span> <span class="fn">MyComponent</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="fn">setCount</span>(<span class="num">1</span>);  <span class="cmt">// ← called during render!</span>
+  <span class="kw">return</span> <span class="tag-c">&lt;div&gt;</span>{count}<span class="tag-c">&lt;/div&gt;</span>;
+}
+
+<span class="cmt">// ✅ State updates go in event handlers or useEffect</span></code></pre>
+
+  <h2>3. Not Using a Key on Lists <span class="tag mistake">Mistake</span></h2>
+  <pre><code><span class="cmt">// ❌ WRONG — no key, or using index as key</span>
+items.<span class="fn">map</span>((item, index) => <span class="tag-c">&lt;Card</span> <span class="attr">key</span>={index} <span class="tag-c">/&gt;</span>)
+
+<span class="cmt">// ✅ CORRECT — unique stable ID</span>
+items.<span class="fn">map</span>(item => <span class="tag-c">&lt;Card</span> <span class="attr">key</span>={item.id} <span class="tag-c">/&gt;</span>)</code></pre>
+
+  <h2>4. Forgetting to Export <span class="tag mistake">Mistake</span></h2>
+  <pre><code><span class="cmt">// ❌ WRONG — component defined but never exported</span>
+<span class="kw">function</span> <span class="fn">MyCard</span>() { ... }
+<span class="cmt">// No export — importing this gives "undefined"!</span>
+
+<span class="cmt">// ✅ CORRECT</span>
+<span class="kw">export default</span> MyCard;   <span class="cmt">// named default export</span>
+<span class="kw">export</span> { MyCard };       <span class="cmt">// OR named export</span></code></pre>
+
+  <h2>5. Putting Fetch Logic Inside JSX <span class="tag mistake">Mistake</span></h2>
+  <pre><code><span class="cmt">// ❌ WRONG — async in render, will crash</span>
+<span class="kw">return</span> (
+  <span class="tag-c">&lt;div&gt;</span>{ <span class="kw">await</span> <span class="fn">fetchUser</span>() }<span class="tag-c">&lt;/div&gt;</span>
+);
+
+<span class="cmt">// ✅ CORRECT — fetch in useEffect, render the state</span>
+<span class="fn">useEffect</span>(() => {
+  <span class="fn">fetchUser</span>().<span class="fn">then</span>(data => <span class="fn">setUser</span>(data));
+}, []);
+<span class="kw">return</span> <span class="tag-c">&lt;div&gt;</span>{user?.name}<span class="tag-c">&lt;/div&gt;</span>;</code></pre>
+
+  <h2>6. Too Many Props ("Prop Drilling") <span class="tag mistake">Mistake</span></h2>
+  <div class="box mistake">
+    <div class="box-label">⚠ Watch For This</div>
+    If you find yourself passing the same prop through 3+ levels of components (A → B → C → D just to use it in D), that's prop drilling. The solution at your level is to restructure your components so D is closer to where the data lives. Full fix later: React Context.
+  </div>
+
+  <h2>7. <code>className</code> vs <code>class</code> <span class="tag mistake">Mistake</span></h2>
+  <pre><code><span class="cmt">// ❌ HTML attribute in JSX — this silently fails</span>
+<span class="tag-c">&lt;div</span> <span class="attr">class</span>=<span class="str">"card"</span><span class="tag-c">&gt;</span>
+
+<span class="cmt">// ✅ JSX attribute</span>
+<span class="tag-c">&lt;div</span> <span class="attr">className</span>=<span class="str">"card"</span><span class="tag-c">&gt;</span></code></pre>
+
+  <a class="nav-link-btn" onclick="show('checklist')">Final Checklist →</a>
+</section>
+
+<!-- ========== CHECKLIST ========== -->
+<section id="checklist">
+  <h1>Readiness Checklist</h1>
+  <p class="subtitle">Click each item when you can do it confidently. When you hit 100%, you're ready.</p>
+
+  <div class="score-bar">
+    <div class="score-fill" id="scoreBar" style="width:0%"></div>
+  </div>
+  <div class="score-label" id="scoreLabel">0 / 16 complete</div>
+
+  <h3>Day 1 — React Core</h3>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I can create a new Vite + React project from scratch</div>
+      <div class="cl-detail">npx create-vite, npm install, npm run dev — under 2 minutes</div>
+    </div>
+  </div>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I understand JSX rules — className, self-closing tags, expressions in {}</div>
+      <div class="cl-detail">Can write JSX without constantly looking things up</div>
+    </div>
+  </div>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I can write a functional component and export it correctly</div>
+      <div class="cl-detail">Capital letter, returns JSX, export default at the bottom</div>
+    </div>
+  </div>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I can pass data into components via props and use it in JSX</div>
+      <div class="cl-detail">Destructuring props, using them in JSX, setting default values</div>
+    </div>
+  </div>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I understand what useState does and when to use it</div>
+      <div class="cl-detail">The difference between state and props, when to lift state up</div>
+    </div>
+  </div>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I can update state correctly (objects and arrays) without mutating</div>
+      <div class="cl-detail">Spread operator, .filter(), .map() for updates</div>
+    </div>
+  </div>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I can handle events and build controlled form inputs</div>
+      <div class="cl-detail">onClick, onChange, onSubmit, e.preventDefault()</div>
+    </div>
+  </div>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I can render a list of items using .map() with proper keys</div>
+      <div class="cl-detail">Always using a unique ID, never index as key</div>
+    </div>
+  </div>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I can render UI conditionally (&&, ternary, early return)</div>
+      <div class="cl-detail">Loading states, empty states, conditional classes</div>
+    </div>
+  </div>
+
+  <h3>Day 2 — Professional Work</h3>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I can look at a Figma design and identify the component boundaries</div>
+      <div class="cl-detail">Can draw boxes around atoms, molecules, organisms</div>
+    </div>
+  </div>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I can extract design tokens from Figma and define CSS variables</div>
+      <div class="cl-detail">Colors, fonts, spacing, border-radius as --var-name in :root</div>
+    </div>
+  </div>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I understand and use the professional folder structure</div>
+      <div class="cl-detail">components/ui, components/layout, pages, hooks, services, data</div>
+    </div>
+  </div>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I can use CSS Modules for component-scoped styling</div>
+      <div class="cl-detail">import styles from './X.module.css', using styles.className</div>
+    </div>
+  </div>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I understand useEffect for data fetching on component mount</div>
+      <div class="cl-detail">Empty dependency array, async fetch inside, loading + error states</div>
+    </div>
+  </div>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I can build a complete feature: data → state → filter/sort → render</div>
+      <div class="cl-detail">Like the Day 2 project: ProductCard, FilterBar, ShopPage</div>
+    </div>
+  </div>
+
+  <div class="checklist-item" onclick="toggle(this)">
+    <div class="cl-box">✓</div>
+    <div>
+      <div class="cl-text">I know the most common mistakes and how to avoid them</div>
+      <div class="cl-detail">State mutation, missing keys, infinite loops, forgetting exports</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 32px; padding: 24px; background: var(--bg3); border: 1px solid var(--border); border-radius: 12px;" id="readyMessage">
+    <p style="color: var(--muted); font-size: 14px;">Complete the items above to see your readiness assessment.</p>
+  </div>
+</section>
+
+</main>
+
+<script>
+  function show(id) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const link = Array.from(document.querySelectorAll('nav a')).find(a => a.getAttribute('onclick')?.includes(`'${id}'`));
+    if (link) link.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function toggle(el) {
+    el.classList.toggle('checked');
+    el.querySelector('.cl-box').textContent = el.classList.contains('checked') ? '✓' : '✓';
+    updateScore();
+  }
+
+  function updateScore() {
+    const items = document.querySelectorAll('.checklist-item');
+    const done = document.querySelectorAll('.checklist-item.checked').length;
+    const total = items.length;
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('scoreBar').style.width = pct + '%';
+    document.getElementById('scoreLabel').textContent = `${done} / ${total} complete`;
+
+    const msg = document.getElementById('readyMessage');
+    if (pct === 100) {
+      msg.innerHTML = '<p style="font-family:var(--mono);font-size:14px;color:var(--accent)">✓ You are ready. Start your project with confidence. You know everything you need to know to build real React UIs professionally.</p>';
+      msg.style.borderColor = 'var(--accent)';
+      msg.style.background = 'rgba(97,239,206,0.05)';
+    } else if (pct >= 60) {
+      msg.innerHTML = `<p style="font-family:var(--mono);font-size:14px;color:var(--accent2)">${pct}% ready — Almost there. Review the unchecked items and make sure you can do them without looking. Don't move on until you can.</p>`;
+    } else {
+      msg.innerHTML = `<p style="font-size:14px;color:var(--muted)">${pct}% complete. Keep working through the tasks. The tasks are what build the muscle memory — reading alone won't do it.</p>`;
+    }
+  }
+</script>
+
+</body>
+</html>
